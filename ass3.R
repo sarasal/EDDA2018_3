@@ -21,6 +21,53 @@ summary(creammult)
 # Question 4
 confint(creammult)
 
+### Exercise 2
+search = read.table("search.txt", header = TRUE)
+
+
+# Question 1:
+B = 5
+I = 3
+skill = as.factor(rep(1:B, I))
+interface = as.factor(rep(1:I, B))
+studentindex = sample(1:B*I)
+search_random_frame= data.frame(cbind(skill, interface, studentindex))
+search_random_frame
+
+# Question 2:
+attach(search)
+
+par(mfrow=c(1,2))
+boxplot(time~skill, main="Boxplot Time x Skill Level", ylab="Time", xlab="Skill Level")
+boxplot(time~interface, main="Boxplot Time x Interface", ylab="Time", xlab="Interface")
+
+par(mfrow=c(1,2))
+interaction.plot(interface, skill, time); interaction.plot(skill, interface, time); 
+
+# Question 3:
+search$skill <- factor(search$skill)
+search$interface <-  factor(search$interface)
+aovsearch = lm(time~interface+skill, data = search)
+anova(aovsearch)
+summary(aovsearch)
+
+
+# Question 4: ?
+estimatedTime = 15.013 +  5.300  + 4.460  
+
+# Question 5:
+par(mfrow=c(1,2))
+qqnorm(residuals(aovsearch))
+plot(fitted(aovsearch), residuals(aovsearch))
+
+# Question 6: ?
+friedman.test(time, interface, skill, data = search)
+#friedman.test(time~interface|skill, data = search)
+
+# Question 7:
+oneaovsearch = lm(time~interface, data = search)
+anova(oneaovsearch)
+
 ### Exercise 6
 
 # Question 1
