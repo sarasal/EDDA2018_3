@@ -49,10 +49,10 @@ search$skill <- factor(search$skill)
 search$interface <-  factor(search$interface)
 aovsearch = lm(time~interface+skill, data = search)
 anova(aovsearch)
-summary(aovsearch)
-
 
 # Question 4: ?
+summary(aovsearch)
+# Result is generated from summary of anova
 estimatedTime = 15.013 +  5.300  + 4.460  
 
 # Question 5:
@@ -67,6 +67,27 @@ friedman.test(time, interface, skill, data = search)
 # Question 7:
 oneaovsearch = lm(time~interface, data = search)
 anova(oneaovsearch)
+
+### Exercise 4
+library(lme4)
+# Question 1
+cow = read.table("cow.txt", header = TRUE)
+cow$id = factor(cow$id)
+cow$per = factor(cow$per)
+
+cowlm = lm(milk~treatment+id+per, data = cow)
+summary(cowlm)
+
+
+# Question 2: Result from question 1
+
+# Question 3
+cowlmer = lmer(milk~treatment+order+per+(1|id), data = cow)
+summary(cowlmer)
+
+# Question 4
+attach(cow)
+t.test(milk[treatment=="A"],milk[treatment=="B"],paired=TRUE)
 
 ### Exercise 6
 
@@ -135,5 +156,4 @@ oxidant2
 par(mfrow=c(1,2))
 qqnorm(residuals(oxidant2), main = "QQ-plot residuals")
 plot(fitted(oxidant2),residuals(oxidant2))
-
 
