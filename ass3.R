@@ -1,29 +1,5 @@
-### Exercise 3
-
-# Question 1
-cream= read.table("cream.txt",header = TRUE)
-
-cream$batch= as.factor(cream$batch)
-cream$position= as.factor(cream$position)
-cream$starter= as.factor(cream$starter)
-
-creamaov= lm(acidity ~ starter + batch + position,data = cream)
-summary(creamaov)
-
-# Question 2
-library(multcomp)
-creammult= glht(creamaov,linfct = mcp(starter="Tukey"))
-summary(creammult)
-
-# Question 3
-# In Word File
-
-# Question 4
-confint(creammult)
-
 ### Exercise 2
 search = read.table("search.txt", header = TRUE)
-
 
 # Question 1:
 B = 5
@@ -67,6 +43,30 @@ friedman.test(time, interface, skill, data = search)
 # Question 7:
 oneaovsearch = lm(time~interface, data = search)
 anova(oneaovsearch)
+
+### Exercise 3
+
+# Question 1
+cream= read.table("cream.txt",header = TRUE)
+
+cream$batch= as.factor(cream$batch)
+cream$position= as.factor(cream$position)
+cream$starter= as.factor(cream$starter)
+
+creamaov= lm(acidity ~ starter + batch + position,data = cream)
+summary(creamaov)
+
+# Question 2
+library(multcomp)
+creammult= glht(creamaov,linfct = mcp(starter="Tukey"))
+summary(creammult)
+
+# Question 3
+# In Word File
+
+# Question 4
+confint(creammult)
+
 
 ### Exercise 4
 library(lme4)
