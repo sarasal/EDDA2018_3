@@ -76,13 +76,13 @@ cow$id = factor(cow$id)
 cow$per = factor(cow$per)
 cow$treatment = factor(cow$treatment)
 
-cowlm = lm(milk~treatment, data = cow)
+cowlm = lm(milk~treatment+id+per, data = cow)
 summary(cowlm)
 
 # Question 2: Result from question 1
 
 # Question 3
-cowlmer = lmer(milk~treatment+(1|id), data = cow)
+cowlmer = lmer(milk~treatment+order+per+(1|id), data = cow)
 summary(cowlmer)
 
 # Question 4
