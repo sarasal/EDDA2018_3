@@ -135,6 +135,70 @@ summary(cowlmer)
 attach(cow)
 t.test(milk[treatment=="A"],milk[treatment=="B"],paired=TRUE)
 
+### Exercise 5
+
+# Question 1
+
+nausea.frame=data.frame("nausea" = integer(),"medicin" = character(), stringsAsFactors = FALSE)
+index = 1
+for(i in 1:100){
+  nausea.frame[i,] <- rbind(0, "Chlorpromazine")
+  index = index + 1
+}
+
+for(i in 1:52){
+  nausea.frame[index,] <- rbind(1, "Chlorpromazine")
+  index = index + 1
+}
+
+for(i in 1:32){
+  nausea.frame[index,] <- rbind(0, "Pentobarbital(100mg)")
+  index = index + 1
+}
+
+for(i in 1:35){
+  nausea.frame[index,] <- rbind(1, "Pentobarbital(100mg)")
+  index = index + 1
+}
+
+for(i in 1:48){
+  nausea.frame[index,] <- rbind(0, "Pentobarbital(150mg)")
+  index = index + 1
+}
+
+for(i in 1:37){
+  nausea.frame[index,] <- rbind(1, "Pentobarbital(150mg)")
+  index = index + 1
+}
+
+nausea.frame
+
+# Question 2
+nausea.frame$medicin=as.factor(nausea.frame$medicin)
+
+xtabs(~medicin+nausea)
+
+# Question 3
+attach(nausea.frame)
+
+t = chisq.test(xtabs(~medicin+nausea))[[1]]
+B=1000
+tstar=numeric(B)
+for (i in 1:B){
+  medicinstar=sample(medicin)
+  tstar[i]= chisq.test(xtabs(~medicinstar+nausea))[[1]]
+}
+
+hist(tstar)
+t
+pl=sum(tstar<t)/B
+pr=sum(tstar>t)/B
+p=2*min(pl,pr)
+pl;pr;p
+
+# Question 4
+chisq.test(xtabs(~medicin+nausea))
+
 ### Exercise 6
 
 # Question 1
