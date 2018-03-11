@@ -41,6 +41,7 @@ estimatedTime
 # Question 5:
 par(mfrow=c(1,2))
 qqnorm(residuals(aovsearch))
+qqline(residuals(aovsearch))
 plot(fitted(aovsearch), residuals(aovsearch))
 
 # Question 6: ?
@@ -89,8 +90,11 @@ summary(cowlm)
 # Question 2: Result from question 1
 
 # Question 3
-cowlmer = lmer(milk~treatment+order+per+(1|id), data = cow)
+cowlmer = lmer(milk~treatment+order+per+(1|id), data = cow, REML=FALSE)
 summary(cowlmer)
+cowlmer1 = lmer(milk~order+per+(1|id), data = cow, REML=FALSE)
+anova(cowlmer1, cowlmer)
+
 
 # Question 4
 attach(cow)
