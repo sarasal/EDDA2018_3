@@ -25,13 +25,14 @@ interaction.plot(humidity,environment,hours)
 data_bread$environment=as.factor(data_bread$environment)
 data_bread$humidity=as.factor(data_bread$humidity)
 breadaov=lm(hours~environment*humidity,data=data_bread)
-anova(breadaov)
+#anova(breadaov)
+summary(breadaov)
 
 # QUestion 4:
 contrasts(data_bread$environment)=contr.sum
 contrasts(data_bread$humidity)=contr.sum
 breadaov2=lm(hours~environment*humidity,data=data_bread)
-anova(breadaov2)
+#anova(breadaov2)
 summary(breadaov2)
 
 # QUestion 5:
@@ -172,7 +173,7 @@ for(i in 1:37){
 }
 
 nausea.frame
-
+attach(nausea.frame)
 # Question 2
 nausea.frame$medicin=as.factor(nausea.frame$medicin)
 
