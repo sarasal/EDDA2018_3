@@ -26,7 +26,7 @@ interaction.plot(humidity,environment,hours)
 data_bread$environment=as.factor(data_bread$environment)
 data_bread$humidity=as.factor(data_bread$humidity)
 breadaov=lm(hours~environment*humidity,data=data_bread)
-#anova(breadaov)
+anova(breadaov)
 summary(breadaov)
 
 # QUestion 4:
@@ -38,6 +38,7 @@ summary(breadaov2)
 
 # QUestion 5:
 #Checking the normality of the population.
+par(mfrow=c(1,2))
 qqnorm(residuals(breadaov2))
 
 # An extra check is also the Shapiro test.
@@ -186,7 +187,7 @@ for(i in 1:37){
   index = index + 1
 }
 
-nausea.frame
+#nausea.frame
 attach(nausea.frame)
 # Question 2
 nausea.frame$medicin=as.factor(nausea.frame$medicin)
@@ -305,7 +306,7 @@ expenseslm = lm(expend~bad+lawyers+employ+pop, data=crime_expenses)
 summary(expenseslm)
 confint(expenseslm)
 #Assessing the current model
-par(mfrow=c(1,1))
+par(mfrow=c(1,2))
 qqnorm(residuals(expenseslm)) # There are
 shapiro.test(residuals(expenseslm)) #Extract check using Shapiro's normality test.
 
