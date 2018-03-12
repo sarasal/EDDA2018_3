@@ -1,4 +1,3 @@
-
 # Loading necessary packages, so they are available in the current session.
 library(multcomp)
 library(lme4)
@@ -321,6 +320,8 @@ summary(expenseslm2)
 # Assessing the new regression parameters:
 qqnorm(residuals(expenseslm2))
 plot(fitted(expenseslm2),residuals(expenseslm2))
+shapiro.test(residuals(expenseslm2)) #Extract check using Shapiro's normality test.
+
 # The qqnorm presents a curved shape with some points far from the line, the qqnorm shows a concentration around certain fitted values (<1000).
 # Given that bad is the variable with highest coeficient we will try to have better results by elevating bad to the
 # power of 2.
@@ -330,6 +331,7 @@ expenseslm3 = lm(expend~bad*lawyers*employ*bad2, data=crime_expenses)
 summary(expenseslm3)
 qqnorm(residuals(expenseslm3))
 plot(fitted(expenseslm3),residuals(expenseslm3))
+shapiro.test(residuals(expenseslm3)) #Extract check using Shapiro's normality test.
 # After this iteration the qqnorm graph presents a better slope and distance between the points.
 # Also the residuals x ffited graph shows that the residuals are more spread.
 
