@@ -336,4 +336,4 @@ plot(fitted(expenseslm3),residuals(expenseslm3))
 #The model is: expenses = 136.3 -8.186*bad -0.1297*lawyers + 0.08236*employ - 0.1440*bad^2
 
 
->>>>>>> 5722b96022e8aeef73a7a2d1462c8390beee9998
+
