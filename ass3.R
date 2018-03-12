@@ -52,11 +52,15 @@ search = read.table("search.txt", header = TRUE)
 # Question 1:
 B = 5
 I = 3
-skill = as.factor(rep(1:B, I))
-interface = as.factor(rep(1:I, B))
-studentindex = sample(1:B*I)
-search_random_frame= data.frame(cbind(skill, interface, studentindex))
-search_random_frame
+N = 1
+
+rbind(rep(1:I,each=N*B),rep(1:B,N*I),sample(1:(N*I*B)))
+
+#skill = as.factor(rep(1:B, N*I))
+#interface = as.factor(rep(1:I, N*B))
+#studentindex = sample(1:B*I*N)
+#search_random_frame= data.frame(cbind(skill, interface, studentindex))
+#search_random_frame
 
 # Question 2:
 attach(search)
@@ -66,22 +70,28 @@ boxplot(time~skill, main="Boxplot Time x Skill Level", ylab="Time", xlab="Skill 
 boxplot(time~interface, main="Boxplot Time x Interface", ylab="Time", xlab="Interface")
 
 par(mfrow=c(1,2))
-interaction.plot(interface, skill, time); interaction.plot(skill, interface, time); 
+interaction.plot(skill, interface, time); interaction.plot(interface, skill, time)
 
 # Question 3:
 search$skill <- factor(search$skill)
 search$interface <-  factor(search$interface)
 aovsearch = lm(time~interface+skill, data = search)
 anova(aovsearch)
+summary(aovsearch)
 
 # Question 4: ?
+contrasts(search$skill)=contr.sum
+contrasts(search$interface)=contr.sum
+aovsearch = lm(time~interface+skill, data = search)
 summary(aovsearch)
-# Result is generated from summary of anova
-estimatedTime = 15.013 +  5.300  + 4.460  
+
+estimatedTime = 20.5467 +  2.1533  + (0 - (-2.3867) - 0.3133)  
+estimatedTime
 
 # Question 5:
 par(mfrow=c(1,2))
 qqnorm(residuals(aovsearch))
+qqline(residuals(aovsearch))
 plot(fitted(aovsearch), residuals(aovsearch))
 
 # Question 6: ?
@@ -130,8 +140,11 @@ summary(cowlm)
 # Question 2: Result from question 1
 
 # Question 3
-cowlmer = lmer(milk~treatment+order+per+(1|id), data = cow)
+cowlmer = lmer(milk~treatment+order+per+(1|id), data = cow, REML=FALSE)
 summary(cowlmer)
+cowlmer1 = lmer(milk~order+per+(1|id), data = cow, REML=FALSE)
+anova(cowlmer1, cowlmer)
+
 
 # Question 4
 attach(cow)
