@@ -267,3 +267,57 @@ par(mfrow=c(1,2))
 qqnorm(residuals(oxidant2), main = "QQ-plot residuals")
 plot(fitted(oxidant2),residuals(oxidant2))
 
+### Exercise 7
+
+# Question 1
+crime_expenses <- read.table(file = "expensescrime.txt", header = TRUE)
+
+#Identifying potential correlations
+pairs(crime_expenses, upper.panel=NULL)
+
+# It's possible to see a potential correlation between expend and bad, lawyers, employ and pop.
+# Verifying the histogram for these variables:
+par(mfrow=c(1,5))
+hist(crime_expenses$expend)
+hist(crime_expenses$bad)
+hist(crime_expenses$lawyers)
+hist(crime_expenses$employ)
+hist(crime_expenses$pop)
+
+# Thus a first attempt to calculate the linear model will be made considering these factors.
+attach(crime_expenses)
+expenseslm = lm(expend~bad+lawyers+employ+pop, data=crime_expenses)
+summary(expenseslm)
+confint(expenseslm)
+#Assessing the current model
+par(mfrow=c(1,1))
+qqnorm(residuals(expenseslm)) # There are
+shapiro.test(residuals(expenseslm)) #Extract check using Shapiro's normality test.
+
+plot(fitted(expenseslm),residuals(expenseslm))
+# The variances for the different fitted values is concentrated with smaller value of fitted expenses.
+
+#2nd Iteration:
+# Considering that in the previous iteration lawyers and employ reject the null hypothesis the 2nd iteration will
+# consider only these factors (bad will also be considered since it has the biggest estimated coeficient).
+# Additionally, now we will calculate the regression considering interaction between the variables.
+expenseslm2 = lm(expend~bad*lawyers*employ, data=crime_expenses)
+summary(expenseslm2)
+# Assessing the new regression parameters:
+qqnorm(residuals(expenseslm2))
+plot(fitted(expenseslm2),residuals(expenseslm2))
+# The qqnorm presents a curved shape with some points far from the line, the qqnorm shows a concentration around certain fitted values (<1000).
+# Given that bad is the variable with highest coeficient we will try to have better results by elevating bad to the
+# power of 2.
+
+crime_expenses$bad2 = crime_expenses$bad^2
+expenseslm3 = lm(expend~bad*lawyers*employ*bad2, data=crime_expenses)
+summary(expenseslm3)
+qqnorm(residuals(expenseslm3))
+plot(fitted(expenseslm3),residuals(expenseslm3))
+# After this iteration the qqnorm graph presents a better slope and distance between the points.
+# Also the residuals x ffited graph shows that the residuals are more spread.
+
+#The model is: expenses = 136.3 -8.186*bad -0.1297*lawyers + 0.08236*employ - 0.1440*bad^2
+
+
