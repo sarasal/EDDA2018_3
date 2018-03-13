@@ -29,11 +29,11 @@ breadaov=lm(hours~environment*humidity,data=data_bread)
 anova(breadaov)
 summary(breadaov)
 
-# Question 4:
+# Question 4
 contrasts(data_bread$environment)=contr.sum
 contrasts(data_bread$humidity)=contr.sum
 breadaov2=lm(hours~environment*humidity,data=data_bread)
-#anova(breadaov2)
+anova(breadaov2)
 summary(breadaov2)
 
 # Question 5
@@ -50,7 +50,7 @@ plot(fitted(breadaov2), residuals(breadaov2))
 ### Exercise 2
 search = read.table("search.txt", header = TRUE)
 
-# Question 1:
+# Question 1
 B = 5
 I = 3
 N = 1
@@ -108,6 +108,7 @@ cream$position= as.factor(cream$position)
 cream$starter= as.factor(cream$starter)
 
 creamaov= lm(acidity ~ starter + batch + position,data = cream)
+anova(creamaov)
 summary(creamaov)
 
 # Question 2
@@ -148,7 +149,6 @@ t.test(milk[treatment=="A"],milk[treatment=="B"],paired=TRUE)
 ### Exercise 5
 
 # Question 1
-
 nausea.frame=data.frame("nausea" = integer(),"medicin" = character(), stringsAsFactors = FALSE)
 index = 1
 for(i in 1:100){
@@ -266,6 +266,7 @@ summary(oxidant3)
 #Multiple R-squared:0.7958 - one variable become insignificant
 
 ## Best Model - step 2
+oxidant2=lm(oxidant ~ wind + temperature, data = airpollution)
 oxidant2
 
 # Question 3
