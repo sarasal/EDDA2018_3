@@ -398,9 +398,9 @@ expenseslm_sd = lm(expend~lawyers+employ, data=crime_expenses)
 summary(expenseslm_sd) #these combination of factors doesn't contribute to R squared
 
 #Graphical analysis
-qqnorm(residuals(expenseslm))
-plot(fitted(expenseslm),residuals(expenseslm))
-shapiro.test(residuals(expenseslm)) # The p-value led us to reject the null hypothesis
+qqnorm(residuals(expenseslm_sd))
+plot(fitted(expenseslm_sd),residuals(expenseslm_sd))
+shapiro.test(residuals(expenseslm_sd)) # The p-value led us to reject the null hypothesis
 
 # Final model:
 #expenses = 31.29 +0.044*employ -5.3396*bad +0.0269*bad^2 + error
