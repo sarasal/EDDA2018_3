@@ -12,7 +12,7 @@ J = 2 #levels of humidity.
 N = 3 #experimental units per combination of the two factors, given that the total of units is 18.
 rbind(rep(1:I,each=N*J),rep(1:J,N*I),sample(1:(N*I*J)))
 
-# QUestion 2:
+# QUestion 2
 par(mfrow=c(1,2))
 boxplot(hours~environment,data=data_bread, main ="Hours x Environment")
 boxplot(hours~humidity,data=data_bread, main ="Hours x Humidity")
@@ -22,7 +22,7 @@ attach(data_bread)
 interaction.plot(environment,humidity,hours)
 interaction.plot(humidity,environment,hours)
 
-# QUestion 3:
+# QUestion 3
 data_bread$environment=as.factor(data_bread$environment)
 data_bread$humidity=as.factor(data_bread$humidity)
 breadaov=lm(hours~environment*humidity,data=data_bread)
@@ -36,7 +36,7 @@ breadaov2=lm(hours~environment*humidity,data=data_bread)
 #anova(breadaov2)
 summary(breadaov2)
 
-# QUestion 5:
+# QUestion 5
 #Checking the normality of the population.
 par(mfrow=c(1,2))
 qqnorm(residuals(breadaov2))
@@ -224,37 +224,60 @@ pairs(oxidant ~ day + wind + temperature + humidity + insolation , data= airpoll
 # Question 2
 oxidant_day= lm(oxidant ~ day, data = airpollution)
 summary(oxidant_day)
-#p_value: 0.582
+#Multiple R-squared: 0.01093
 
 oxidant_wind= lm(oxidant ~ wind, data = airpollution)
 summary(oxidant_wind)
-#p_value: 8.20e-07
+#Multiple R-squared: 0.5863
 
 oxidant_temperature=lm(oxidant ~ temperature, data = airpollution)
 summary(oxidant_temperature)
-#p_value: 1.17e-06
+#Multiple R-squared: 0.576
 
 oxidant_humidity=lm(oxidant ~ humidity, data = airpollution)
 summary(oxidant_humidity)
-#p_value: 0.056317
+#Multiple R-squared: 0.124
 
 oxidant_insolation=lm(oxidant ~ insolation, data = airpollution)
 summary(oxidant_insolation)
-#p_value: 0.00441
+#Multiple R-squared: 0.2552
 
-## step 1 - select the smallest p-value (wind)
+## step 1 - select the highest R-squared (wind)
 oxidant1= lm(oxidant ~ wind, data = airpollution)
 summary(oxidant1)
+#Multiple R-squared: 0.5863
 
-## step 2 - select second smallest p-value (temperature)
+## step 2 - select the highest R-squared (temperature as second variable) among below options
 oxidant2=lm(oxidant ~ wind + temperature, data = airpollution)
 summary(oxidant2)
+#Multiple R-squared:0.7773 
 
-## step 3 - select third smallest p-value (insolation)
+oxidant2=lm(oxidant ~ wind + insolation, data = airpollution)
+summary(oxidant2)
+#Multiple R-squared:0.6613 
+
+oxidant2=lm(oxidant ~ wind + humidity, data = airpollution)
+summary(oxidant2)
+#Multiple R-squared:0.5913 - one variable become insignificant
+
+oxidant2=lm(oxidant ~ wind + day, data = airpollution)
+summary(oxidant2)
+#Multiple R-squared:0.5989 - one variable become insignificant
+
+## step 3 - all added variable make previous variables insignificant - stop stepping up
 oxidant3=lm(oxidant ~ wind + temperature + insolation, data = airpollution)
 summary(oxidant3)
+#Multiple R-squared:0.7816 - one variable become insignificant
 
-## Best Model
+oxidant3=lm(oxidant ~ wind + temperature + humidity, data = airpollution)
+summary(oxidant3)
+#Multiple R-squared:0.7964 - one variable become insignificant
+
+oxidant3=lm(oxidant ~ wind + temperature + day, data = airpollution)
+summary(oxidant3)
+#Multiple R-squared:0.7958 - one variable become insignificant
+
+## Best Model - step 2
 oxidant2
 
 # Question 3
