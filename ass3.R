@@ -295,56 +295,111 @@ qqnorm(residuals(oxidant2), main = "QQ-plot residuals")
 plot(fitted(oxidant2),residuals(oxidant2))
 
 ### Exercise 7
-
-# Question 1
 crime_expenses <- read.table(file = "expensescrime.txt", header = TRUE)
 
 #Identifying potential correlations
 pairs(crime_expenses, upper.panel=NULL)
 
-# It's possible to see a potential correlation between expend and bad, lawyers, employ and pop.
-# Verifying the histogram for these variables:
-par(mfrow=c(1,5))
-hist(crime_expenses$expend)
-hist(crime_expenses$bad)
-hist(crime_expenses$lawyers)
-hist(crime_expenses$employ)
-hist(crime_expenses$pop)
+# Studying the collinearity between two variables:
+round(cor(crime_expenses[,3:7]),2)
+# As can be seen, there is a strong correlation between employ and lawyers, so the model shouldn't contain both factors at the same time.
 
-# Thus a first attempt to calculate the linear model will be made considering these factors.
 attach(crime_expenses)
-expenseslm = lm(expend~bad+lawyers+employ+pop, data=crime_expenses)
-summary(expenseslm)
-confint(expenseslm)
-#Assessing the current model
-par(mfrow=c(1,2))
-qqnorm(residuals(expenseslm)) # There are
-shapiro.test(residuals(expenseslm)) #Extract check using Shapiro's normality test.
 
-plot(fitted(expenseslm),residuals(expenseslm))
-# The variances for the different fitted values is concentrated with smaller value of fitted expenses.
+# step-up strategy
+## 1st Iteration
+expenseslm_su = lm(expend~bad, data=crime_expenses)
+summary(expenseslm_su) # R-squared = 0.6902
 
-#2nd Iteration:
-# Considering that in the previous iteration lawyers and employ reject the null hypothesis the 2nd iteration will
-# consider only these factors (bad will also be considered since it has the biggest estimated coeficient).
-# Additionally, now we will calculate the regression considering interaction between the variables.
-expenseslm2 = lm(expend~bad*lawyers*employ, data=crime_expenses)
-summary(expenseslm2)
-# Assessing the new regression parameters:
-qqnorm(residuals(expenseslm2))
-plot(fitted(expenseslm2),residuals(expenseslm2))
-# The qqnorm presents a curved shape with some points far from the line, the qqnorm shows a concentration around certain fitted values (<1000).
-# Given that bad is the variable with highest coeficient we will try to have better results by elevating bad to the
-# power of 2.
+expenseslm_su = lm(expend~lawyers, data=crime_expenses)
+summary(expenseslm_su) # R-squared = 0.936
 
+expenseslm_su = lm(expend~employ, data=crime_expenses)
+summary(expenseslm_su) # R-squared = 0.953 ==> Highest factor
+
+expenseslm_su = lm(expend~pop, data=crime_expenses)
+summary(expenseslm_su) # R-squared = 0.9054
+
+## 2nd Iteration
+expenseslm_su = lm(expend~employ+bad, data=crime_expenses)
+summary(expenseslm_su) # R-squared = 0.9532 !! these combination of factors doesn't contribute to R squared, also high p-value
+
+expenseslm_su = lm(expend~employ+lawyers, data=crime_expenses)
+summary(expenseslm_su) # R-squared = 0.9616 ==> Highest factor on the iteration
+
+expenseslm_su = lm(expend~employ+pop, data=crime_expenses)
+summary(expenseslm_su) # R-squared = 0.9524 !! these combination of factors doesn't contribute to R squared, also high p-value
+
+# Re-executing the highest R-squared for analysis
+expenseslm_su = lm(expend~employ+lawyers, data=crime_expenses)
+summary(expenseslm_su)
+
+# Graphical analysis
+qqnorm(residuals(expenseslm_su))
+plot(fitted(expenseslm_su),residuals(expenseslm_su))
+shapiro.test(residuals(expenseslm_su)) # The p-value led us to reject the null hypothesis
+
+## 3rd Iteration (adding bad since this factor had the highest coeficient, removing lawyers since employ and lawyers are correlated)
+expenseslm_su = lm(expend~employ+bad, data=crime_expenses)
+summary(expenseslm_su) #R squared = 0.9532
+
+expenseslm_su = lm(expend~employ+pop, data=crime_expenses)
+summary(expenseslm_su) #these combination of factors doesn't contribute to R squared
+
+## 4th Iteration - After trying the previous options, bad^2 is added to the model - This will generate the best R-squared !
 crime_expenses$bad2 = crime_expenses$bad^2
-expenseslm3 = lm(expend~bad*lawyers*employ*bad2, data=crime_expenses)
-summary(expenseslm3)
-qqnorm(residuals(expenseslm3))
-plot(fitted(expenseslm3),residuals(expenseslm3))
-# After this iteration the qqnorm graph presents a better slope and distance between the points.
-# Also the residuals x ffited graph shows that the residuals are more spread.
+expenseslm_su = lm(expend~employ+bad+bad2, data=crime_expenses)
+summary(expenseslm_su) #R squared 0.9634
 
-#The model is: expenses = 136.3 -8.186*bad -0.1297*lawyers + 0.08236*employ - 0.1440*bad^2
+# Graphical analysis from the 4th Iteration (last improvement on R squared)
+
+qqnorm(residuals(expenseslm_su))
+plot(fitted(expenseslm_su),residuals(expenseslm_su))
+shapiro.test(residuals(expenseslm_su)) # The p-value still led us to reject the null hypothesis (that residuals follow a normal dist.)
+
+#Checking for potential/influence points:
+round(cooks.distance(expenseslm_su),2)
+plot(1:51,cooks.distance(expenseslm_su))
+#As can be seen there are two potential points.
+new_crime_expenses <- crime_expenses[ which(crime_expenses$state != 'TX'),]
+new_crime_expenses <- new_crime_expenses[ which(new_crime_expenses$state != 'CA'),]
+detach(crime_expenses)
+attach(new_crime_expenses)
+
+# 5th Iteration - after removing the potential point.
+new_crime_expenses$bad2 = new_crime_expenses$bad^2
+expenseslm_su = lm(expend~employ+bad+bad2, data=new_crime_expenses)
+summary(expenseslm_su) #Contributes ==> R squared moves from 0.9634 to 0.9704, it's possible to say that those points were influence points, given the
+#changes in the estimated parameters.
+
+#Checking again for new potential/influence points:
+round(cooks.distance(expenseslm_su),2)
+plot(1:49,cooks.distance(expenseslm_su))
+
+# Graphical analysis
+qqnorm(residuals(expenseslm_su))
+plot(fitted(expenseslm_su),residuals(expenseslm_su))
+shapiro.test(residuals(expenseslm_su)) # The p-value calculated via Shapiro improves but still led us to reject the null hypothesis
 
 
+###### !!!!!!!! Step-down strategy !!!
+
+
+detach(new_crime_expenses)
+attach(crime_expenses)
+
+#1st Iteration - all factors
+expenseslm_sd = lm(expend~bad+lawyers+employ+pop, data=crime_expenses)
+summary(expenseslm_sd) #R squared = 0.9637
+
+#2nd Iteration - factors bad and pop are removed given that their respective p-values are above 0.05.
+expenseslm_sd = lm(expend~lawyers+employ, data=crime_expenses)
+summary(expenseslm_sd) #these combination of factors doesn't contribute to R squared
+
+#Graphical analysis
+qqnorm(residuals(expenseslm))
+plot(fitted(expenseslm),residuals(expenseslm))
+shapiro.test(residuals(expenseslm)) # The p-value led us to reject the null hypothesis
+
+# Final model:
+#expenses = 31.29 +0.044*employ -5.3396*bad +0.0269*bad^2 + error
