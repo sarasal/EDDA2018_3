@@ -12,7 +12,7 @@ J = 2 #levels of humidity.
 N = 3 #experimental units per combination of the two factors, given that the total of units is 18.
 rbind(rep(1:I,each=N*J),rep(1:J,N*I),sample(1:(N*I*J)))
 
-# QUestion 2
+# Question 2
 par(mfrow=c(1,2))
 boxplot(hours~environment,data=data_bread, main ="Hours x Environment")
 boxplot(hours~humidity,data=data_bread, main ="Hours x Humidity")
@@ -22,21 +22,21 @@ attach(data_bread)
 interaction.plot(environment,humidity,hours)
 interaction.plot(humidity,environment,hours)
 
-# QUestion 3
+# Question 3
 data_bread$environment=as.factor(data_bread$environment)
 data_bread$humidity=as.factor(data_bread$humidity)
 breadaov=lm(hours~environment*humidity,data=data_bread)
 anova(breadaov)
 summary(breadaov)
 
-# QUestion 4:
+# Question 4:
 contrasts(data_bread$environment)=contr.sum
 contrasts(data_bread$humidity)=contr.sum
 breadaov2=lm(hours~environment*humidity,data=data_bread)
 #anova(breadaov2)
 summary(breadaov2)
 
-# QUestion 5
+# Question 5
 #Checking the normality of the population.
 par(mfrow=c(1,2))
 qqnorm(residuals(breadaov2))
@@ -57,13 +57,8 @@ N = 1
 
 rbind(rep(1:I,each=N*B),rep(1:B,N*I),sample(1:(N*I*B)))
 
-#skill = as.factor(rep(1:B, N*I))
-#interface = as.factor(rep(1:I, N*B))
-#studentindex = sample(1:B*I*N)
-#search_random_frame= data.frame(cbind(skill, interface, studentindex))
-#search_random_frame
 
-# Question 2:
+# Question 2
 attach(search)
 
 par(mfrow=c(1,2))
@@ -73,14 +68,14 @@ boxplot(time~interface, main="Boxplot Time x Interface", ylab="Time", xlab="Inte
 par(mfrow=c(1,2))
 interaction.plot(skill, interface, time); interaction.plot(interface, skill, time)
 
-# Question 3:
+# Question 3
 search$skill <- factor(search$skill)
 search$interface <-  factor(search$interface)
 aovsearch = lm(time~interface+skill, data = search)
 anova(aovsearch)
 summary(aovsearch)
 
-# Question 4: ?
+# Question 4
 contrasts(search$skill)=contr.sum
 contrasts(search$interface)=contr.sum
 aovsearch = lm(time~interface+skill, data = search)
@@ -89,17 +84,17 @@ summary(aovsearch)
 estimatedTime = 20.5467 +  2.1533  + (0 - (-2.3867) - 0.3133)  
 estimatedTime
 
-# Question 5:
+# Question 5
 par(mfrow=c(1,2))
 qqnorm(residuals(aovsearch))
 qqline(residuals(aovsearch))
 plot(fitted(aovsearch), residuals(aovsearch))
 
-# Question 6: ?
+# Question 6
 friedman.test(time, interface, skill, data = search)
 #friedman.test(time~interface|skill, data = search)
 
-# Question 7:
+# Question 7
 oneaovsearch = lm(time~interface, data = search)
 anova(oneaovsearch)
 
@@ -116,7 +111,6 @@ creamaov= lm(acidity ~ starter + batch + position,data = cream)
 summary(creamaov)
 
 # Question 2
-library(multcomp)
 creammult= glht(creamaov,linfct = mcp(starter="Tukey"))
 summary(creammult)
 
@@ -159,33 +153,27 @@ nausea.frame=data.frame("nausea" = integer(),"medicin" = character(), stringsAsF
 index = 1
 for(i in 1:100){
   nausea.frame[i,] <- rbind(0, "Chlorpromazine")
-  index = index + 1
-}
+  index = index + 1}
 
 for(i in 1:52){
   nausea.frame[index,] <- rbind(1, "Chlorpromazine")
-  index = index + 1
-}
+  index = index + 1}
 
 for(i in 1:32){
   nausea.frame[index,] <- rbind(0, "Pentobarbital(100mg)")
-  index = index + 1
-}
+  index = index + 1}
 
 for(i in 1:35){
   nausea.frame[index,] <- rbind(1, "Pentobarbital(100mg)")
-  index = index + 1
-}
+  index = index + 1}
 
 for(i in 1:48){
   nausea.frame[index,] <- rbind(0, "Pentobarbital(150mg)")
-  index = index + 1
-}
+  index = index + 1}
 
 for(i in 1:37){
   nausea.frame[index,] <- rbind(1, "Pentobarbital(150mg)")
-  index = index + 1
-}
+  index = index + 1}
 
 #nausea.frame
 attach(nausea.frame)
@@ -358,6 +346,5 @@ plot(fitted(expenseslm3),residuals(expenseslm3))
 # Also the residuals x ffited graph shows that the residuals are more spread.
 
 #The model is: expenses = 136.3 -8.186*bad -0.1297*lawyers + 0.08236*employ - 0.1440*bad^2
-
 
 
